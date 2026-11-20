@@ -452,6 +452,56 @@ EOF
       (heredoc_end))))
 
 ======================================
+Heredocs with file redirects and pipes
+======================================
+
+cat <<EOF 2>&1 | tail -1
+hi
+EOF
+
+cat <<'EOF' 2>/dev/null > out.txt |& tee log
+hi
+EOF
+
+---
+
+(program
+  (redirected_statement
+    (command
+      (command_name
+        (word)))
+    (heredoc_redirect
+      (heredoc_start)
+      (file_redirect
+        (file_descriptor)
+        (number))
+      (pipeline
+        (command
+          (command_name
+            (word))
+          (number)))
+      (heredoc_body)
+      (heredoc_end)))
+  (redirected_statement
+    (command
+      (command_name
+        (word)))
+    (heredoc_redirect
+      (heredoc_start)
+      (file_redirect
+        (file_descriptor)
+        (word))
+      (file_redirect
+        (word))
+      (pipeline
+        (command
+          (command_name
+            (word))
+          (word)))
+      (heredoc_body)
+      (heredoc_end))))
+
+======================================
 Heredocs with escaped expansions
 ======================================
 
@@ -991,3 +1041,60 @@ bin/ls /usr/bin
     (command_name
       (word))
     (word)))
+===============================
+Standalone heredoc
+===============================
+
+<<EOF
+hello
+EOF
+
+---
+
+(program
+  (redirected_statement
+    (heredoc_redirect
+      (heredoc_start)
+      (heredoc_body)
+      (heredoc_end))))
+
+===============================
+Standalone heredoc with output redirect
+===============================
+
+<< 'EOF' > scratch.ts
+hello
+EOF
+
+---
+
+(program
+  (redirected_statement
+    (heredoc_redirect
+      (heredoc_start)
+      (file_redirect
+        (word))
+      (heredoc_body)
+      (heredoc_end))))
+
+===============================
+Multiple standalone redirects including heredoc
+===============================
+
+> out.txt <<EOF 2> err.txt
+hello
+EOF
+
+---
+
+(program
+  (redirected_statement
+    (file_redirect
+      (word))
+    (heredoc_redirect
+      (heredoc_start)
+      (file_redirect
+        (file_descriptor)
+        (word))
+      (heredoc_body)
+      (heredoc_end))))

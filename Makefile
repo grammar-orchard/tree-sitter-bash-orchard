@@ -1,6 +1,6 @@
 LANGUAGE_NAME := tree-sitter-bash-orchard
 HOMEPAGE_URL := https://codeberg.org/grammar-orchard/tree-sitter-bash-orchard
-VERSION := 0.1.0
+VERSION := 0.2.0
 DESCRIPTION := Parser for Bash files
 
 # repository

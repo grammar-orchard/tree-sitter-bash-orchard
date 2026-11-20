@@ -2,7 +2,6 @@
 #include "tree_sitter/parser.h"
 
 #include <assert.h>
-#include <ctype.h>
 #include <string.h>
 #include <wctype.h>
 
@@ -238,9 +237,15 @@ static bool scan_heredoc_end_identifier(Heredoc *heredoc, TSLexer *lexer) {
         }
     }
     array_push(&heredoc->current_leading_word, '\0');
-    return heredoc->delimiter.size == 0
-               ? false
-               : strcmp(heredoc->current_leading_word.contents, heredoc->delimiter.contents) == 0;
+    if (heredoc->delimiter.size == 0 ||
+        strcmp(heredoc->current_leading_word.contents, heredoc->delimiter.contents) != 0) {
+        return false;
+    }
+    // The delimiter must be the whole line: a body line that merely starts with
+    // the delimiter text (`Err(x)` under `<<'E'`, `EOF2` under `<<EOF`) is content.
+    // A `)` may follow: that closes the `$(...)` the heredoc is nested in.
+    return lexer->lookahead == '\n' || lexer->lookahead == '\r' || lexer->lookahead == '\0' ||
+           lexer->lookahead == ')';
 }
 
 static bool scan_heredoc_content(Scanner *scanner, TSLexer *lexer, enum TokenType middle_type,
@@ -350,7 +355,8 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
     if (valid_symbols[CONCAT] && !in_error_recovery(valid_symbols)) {
         if (!(lexer->lookahead == 0 || iswspace(lexer->lookahead) || lexer->lookahead == '>' ||
               lexer->lookahead == '<' || lexer->lookahead == ')' || lexer->lookahead == '(' ||
-              lexer->lookahead == ';' || lexer->lookahead == '&' || lexer->lookahead == '|' ||
+              (lexer->lookahead == ';' && !valid_symbols[CLOSING_BRACE]) || lexer->lookahead == '&' ||
+              lexer->lookahead == '|' ||
               (lexer->lookahead == '}' && valid_symbols[CLOSING_BRACE]) ||
               (lexer->lookahead == ']' && valid_symbols[CLOSING_BRACKET]))) {
             lexer->result_symbol = CONCAT;
@@ -636,6 +642,11 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
             } else {
                 break;
             }
+        }
+
+        // `;` is a literal character inside `${...}`, e.g. `${v//a/b;c}`
+        if (valid_symbols[EXPANSION_WORD] && lexer->lookahead == ';') {
+            goto expansion_word;
         }
 
         if (is_number && valid_symbols[FILE_DESCRIPTOR] && (lexer->lookahead == '>' || lexer->lookahead == '<')) {
@@ -1069,7 +1080,7 @@ extglob_pattern:
     }
 
 expansion_word:
-    if (valid_symbols[EXPANSION_WORD]) {
+    if (valid_symbols[EXPANSION_WORD] && !in_error_recovery(valid_symbols)) {
         bool advanced_once = false;
         bool advance_once_space = false;
         for (;;) {
@@ -1155,7 +1166,7 @@ brace_start:
         advance(lexer);
         lexer->mark_end(lexer);
 
-        while (isdigit(lexer->lookahead)) {
+        while (iswdigit(lexer->lookahead)) {
             advance(lexer);
         }
 
@@ -1169,7 +1180,7 @@ brace_start:
         }
         advance(lexer);
 
-        while (isdigit(lexer->lookahead)) {
+        while (iswdigit(lexer->lookahead)) {
             advance(lexer);
         }
 

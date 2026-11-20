@@ -193,7 +193,7 @@ export default grammar({
         field('body', choice($.if_statement, $.while_statement)),
         $.herestring_redirect,
       ),
-      field('redirect', repeat1($._redirect)),
+      field('redirect', repeat1(choice($.file_redirect, $.heredoc_redirect, $.herestring_redirect))),
       $.herestring_redirect,
     ))),
 
@@ -547,7 +547,10 @@ export default grammar({
         alias($._heredoc_pipeline, $.pipeline),
         seq(
           field('redirect', repeat1($._redirect)),
-          optional($._heredoc_expression),
+          optional(choice(
+            alias($._heredoc_pipeline, $.pipeline),
+            $._heredoc_expression,
+          )),
         ),
         $._heredoc_expression,
         $._heredoc_command,
@@ -855,7 +858,7 @@ export default grammar({
 
     raw_string: _ => /'[^']*'/,
 
-    ansi_c_string: _ => /\$'([^']|\\')*'/,
+    ansi_c_string: _ => /\$'([^'\\]|\\.)*'/, // older one is /\$'([^']|\\')*'/
 
     number: $ => choice(
       /-?(0x)?[0-9]+(#[0-9A-Za-z@_]+)?/,
@@ -1100,7 +1103,7 @@ export default grammar({
       ),
     ),
 
-    comment: _ => token(prec(-10, /#.*/)),
+    comment: _ => token(prec(-10, /#[^\r\n]*/)),
 
     _comment_word: _ => token(prec(-8, seq(
       choice(

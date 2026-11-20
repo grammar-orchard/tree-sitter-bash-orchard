@@ -1,6 +1,5 @@
 examples/bash-it/completion/available/bundler.completion.bash
 examples/bash-it/completion/available/sqlmap.completion.bash
-examples/bash-it/plugins/available/colors.plugin.bash
 examples/bash-it/plugins/available/history-eternal.plugin.bash
 examples/bash-it/themes/hawaii50/hawaii50.theme.bash
 examples/bash/examples/functions/notify.bash
@@ -59,7 +58,6 @@ examples/gentoo/sys-fs/bcachefs-tools/bcachefs-tools-1.25.3.ebuild
 examples/gentoo/sys-fs/bcachefs-tools/bcachefs-tools-1.31.5.ebuild
 examples/gentoo/www-client/firefox-bin/files/firefox-bin-r1.sh
 examples/gentoo/www-client/firefox/files/firefox-r1.sh
-examples/wild-corpus/cloud/chef-bcpc/legacy_scripts/make_databag.sh
 examples/wild-corpus/cloud/docker/hack/make.sh
 examples/wild-corpus/cloud/kubernetes/build/common.sh
 examples/wild-corpus/cloud/kubernetes/cluster/gce/config-default.sh
@@ -93,7 +91,6 @@ examples/wild-corpus/esoteric/CmdlineGL/share/examples/Robot.sh
 examples/wild-corpus/esoteric/make-a-lisp-bash/core.sh
 examples/wild-corpus/esoteric/shasm/shasm.sh
 examples/wild-corpus/exp/shootout/timing.sh
-examples/wild-corpus/freebsd-11.1/contrib/binutils/ld/emulparams/elf64bmip.sh
 examples/wild-corpus/freebsd-11.1/contrib/binutils/ld/genscripts.sh
 examples/wild-corpus/freebsd-11.1/contrib/gcc/scan-types.sh
 examples/wild-corpus/freebsd-11.1/contrib/groff/src/preproc/eqn/neqn.sh
@@ -141,7 +138,6 @@ examples/wild-corpus/git/git-rebase--interactive.sh
 examples/wild-corpus/git/git-submodule.sh
 examples/wild-corpus/git/t/lib-pack.sh
 examples/wild-corpus/git/t/t9500-gitweb-standalone-no-errors.sh
-examples/wild-corpus/gnu/binutils-2.26/ld/emulparams/elf64bmip.sh
 examples/wild-corpus/gnu/binutils-2.26/ld/genscripts.sh
 examples/wild-corpus/gnu/coreutils-8.22/gnulib-tests/init.sh
 examples/wild-corpus/gnu/coreutils-8.22/tests/init.sh

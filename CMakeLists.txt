@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 project(tree-sitter-bash-orchard
-        VERSION "0.1.0"
+        VERSION "0.2.0"
         DESCRIPTION "Parser for Bash files"
         HOMEPAGE_URL "https://codeberg.org/grammar-orchard/tree-sitter-bash-orchard"
         LANGUAGES C)
